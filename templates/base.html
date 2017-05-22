@@ -1,0 +1,93 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}Dominio | Titulo pagina {% endblock %}</title>
+        <meta name="description" content="{% block description %}{% endblock %}"/>
+
+        <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+        <link href="{% static "bootstrap/css/local.min.css" %}" rel="stylesheet">
+
+
+        {% block head %}
+        {% endblock %}
+    </head>
+
+    <body>
+      <div class="col-md-4 hidden-sm">
+          {% block sidebar %}
+          <form action="/" method="post">
+               <div>
+                  <select name="distrito">
+                    <option value="ARGANZUELA">ARGANZUELA</option>
+                    <option value="CHAMARTIN">CHAMARTIN</option>
+                    <option value="HORTALEZA">HORTALEZA</option>
+                    <option value="PUENTE DE VALLECAS">PUENTE DE VALLECAS</option>
+                    <option value="TETUAN">TETUAN</option>
+                    <option value="VILLAVERDE">VILLAVERDE</option>
+                    <option value="BARAJAS">BARAJAS</option>
+                    <option value="CHAMBERI">CHAMBERI</option>
+                    <option value="LATINA">LATINA</option>
+                    <option value="RETIRO">RETIRO</option>
+                    <option value="USERA">USERA</option>
+                    <option value="CARABANCHEL">CARABANCHEL</option>
+                    <option value="CIUDAD LINEAL">CIUDAD LINEAL</option>
+                    <option value="MONCLOA-ARAVACA">MONCLOA-ARAVACA</option>
+                    <option value="SALAMANCA">SALAMANCA</option>
+                    <option value="VICALVARO">VICALVARO</option>
+                    <option value="CENTRO">CENTRO</option>
+                    <option value="FUENCARRAL-EL PARDO">FUENCARRAL-EL PARDO</option>
+                    <option value="MORATALAZ">MORATALAZ</option>
+                    <option value="SAN BLAS-CANILLEJAS">SAN BLAS-CANILLEJAS</option>
+                    <option value="VILLA DE VALLECAS">VILLA DE VALLECAS</option>
+                 </select>
+               </div>
+
+               <div class="button">
+                   <button type="submit">Enviar</button>
+               </div>
+        </form>
+        {% endblock %}
+
+      </div>
+  </div>
+
+
+
+
+
+
+        <div class="container">
+            {% block content %}
+            <div class="row">
+                <div class="col-md-8 col-sm-12">
+                    {% block main-content %}
+                     {% for p in aparcamientos %}
+                           <div>
+                               <a href="{{p.url}}"> {{p.nombre}} </a>
+                                  <p> ---> {{p.distrito}} </p>
+
+                           </div>
+                        {% endfor %}
+                    {% endblock %}
+                </div>
+
+
+            {% endblock %}
+        </div>
+
+
+
+        <!-- All that javascript -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+
+        {% block scripts %}
+        {% endblock %}
+    </body>
+</html>

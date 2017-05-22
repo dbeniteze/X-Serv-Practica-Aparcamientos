@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib import admin
+from django.utils import timezone
 
 
 # Create your models here.
@@ -20,3 +21,15 @@ class Aparcamiento(models.Model):
     longitud = models.CharField(max_length=200, blank = True)
     tlf = models.CharField(max_length=200, blank = True)
     mail = models.CharField(max_length = 200, blank = True)
+
+class Info_Usuario(models.Model):
+    usuario = models.CharField(max_length=32, blank=True)
+    aparcamiento = models.ManyToManyField(Aparcamiento)
+    hora_seleccion = models.DateTimeField(default=timezone.now)
+    pagina_personal = models.CharField(max_length=100, blank=True, default="Página de usuario") #posibilidad
+
+class Comentario(models.Model):
+    usuario = models.CharField(max_length=32, blank=True)
+    comentario = models.TextField()
+    aparcamiento = models.ForeignKey(Aparcamiento)
+    hora = models.DateTimeField(default=timezone.now)

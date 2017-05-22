@@ -2,9 +2,12 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from .models import Aparcamiento
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import authenticate, login as log_in, logout as log_out
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.models import User
 from bs4 import BeautifulSoup, CData
 import urllib.request
+from django.template import loader
 
 
 # Create your views here.
@@ -14,7 +17,7 @@ xml_link = str('http://datos.munimadrid.es/portal/site/egob/menuitem.' +
             '202584-0-aparcamientos-residentes&mgmtid=e84276ac109d3410Vg' +
             'nVCM2000000c205a0aRCRD&preview=full')
 
-def parser(xml_doc):
+def parser(request):
     r = urllib.request.urlopen(xml_link).read()
     soup = BeautifulSoup(r, "xml")
 
@@ -76,3 +79,71 @@ def parser(xml_doc):
                                      tlf = aux_list[14],
                                      mail = aux_list[15])
         nueva_entrada.save()
+
+
+
+
+@csrf_exempt
+def inicial(request):
+
+    if request.method == 'GET':
+        template = loader.get_template('base.html')
+
+        aparcamientos = Aparcamiento.objects.all()
+        context = {
+            'aparcamientos': aparcamientos
+            }
+    if request.method == 'POST':
+        template = loader.get_template('base.html')
+        filtro_distrito = request.POST['distrito']
+        try:
+            aparcamientos_filtrados = Aparcamiento.objects.filter(distrito=filtro_distrito)
+        except Exception as e:
+            raise "NO ENCUENTRA DISTRITO"
+
+        context = {
+            'aparcamientos': aparcamientos_filtrados
+            }
+
+    return HttpResponse(template.render(context, request))
+
+
+
+def login(request):
+    #if not request.user.is_anonymous():
+    #    return HttpResponseRedirect('/privado')
+    template = loader.get_template('login.html')
+    if request.method == 'POST':
+        formulario = AuthenticationForm(request.POST)
+        usuario = request.POST['username']
+        clave = request.POST['password']
+        acceso = authenticate(username=usuario, password=clave)
+        if acceso is not None:
+            log_in(request, acceso)
+            return HttpResponseRedirect('/')
+        else:
+            pass
+            return HttpResponseRedirect('/registro')
+    else:
+        formulario = AuthenticationForm()
+        context = {'formulario': formulario}
+    return HttpResponse(template.render(context, request))
+
+
+
+def logout(request):
+    log_out(request)
+    return HttpResponseRedirect('/')
+
+
+def registro(request):
+    template = loader.get_template('registro.html')
+    if request.method=='POST':
+        formulario = UserCreationForm(request.POST)
+        if formulario.is_valid:
+            formulario.save()
+            return HttpResponseRedirect('/')
+    else:
+        formulario = UserCreationForm()
+        context = {'formulario': formulario}
+    return HttpResponse(template.render(context, request))

@@ -1,0 +1,42 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}Dominio | Titulo pagina {% endblock %}</title>
+        <meta name="description" content="{% block description %}{% endblock %}"/>
+
+        <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+        <link href="{% static "bootstrap/css/local.min.css" %}" rel="stylesheet">
+
+
+        {% block head %}
+        {% endblock %}
+    </head>
+
+    <body>
+      {% block titulo %}Registro{% endblock %}
+      {% block encabezado %}
+      	<h1>Registro</h1>
+      {% endblock %}
+      {% block contenido %}
+      	<form id='formulario' method='post' action=''>{% csrf_token %}
+      		<table>{{formulario}}</table>
+      		<p><input type='submit' value='Ingresar'/></p>
+      	</form>
+      {% endblock %}
+
+
+
+        <!-- All that javascript -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+        <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+
+        {% block scripts %}
+        {% endblock %}
+    </body>
+</html>
