@@ -5,7 +5,7 @@ from django.utils import timezone
 
 # Create your models here.
 class Aparcamiento(models.Model):
-    identificador = models.CharField(max_length = 10, blank=True)
+    identificador = models.CharField(max_length = 100, blank=True)
     nombre = models.CharField(max_length=200,  blank = True)
     descripcion = models.TextField(blank = True)
     access = models.BooleanField(default=False)
@@ -24,12 +24,10 @@ class Aparcamiento(models.Model):
 
 class Info_Usuario(models.Model):
     usuario = models.CharField(max_length=32, blank=True)
-    aparcamiento = models.ManyToManyField(Aparcamiento)
+    aparcamiento = models.ForeignKey('Aparcamiento')
     hora_seleccion = models.DateTimeField(default=timezone.now)
     pagina_personal = models.CharField(max_length=100, blank=True, default="Página de usuario") #posibilidad
 
 class Comentario(models.Model):
-    usuario = models.CharField(max_length=32, blank=True)
     comentario = models.TextField()
-    aparcamiento = models.ForeignKey(Aparcamiento)
-    hora = models.DateTimeField(default=timezone.now)
+    aparcamiento = models.ForeignKey('Aparcamiento')

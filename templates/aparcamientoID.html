@@ -1,0 +1,95 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}Dominio | Titulo pagina {% endblock %}</title>
+        <meta name="description" content="{% block description %}{% endblock %}"/>
+
+        <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+        <link href="{% static "bootstrap/css/local.min.css" %}" rel="stylesheet">
+
+
+        {% block head %}
+        {% endblock %}
+    </head>
+
+    <body>
+
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-8 col-sm-12">
+                    {% block main-content %}
+                     {% for p in aparcamientos %}
+                           <div>
+                               <a href="{{p.url}}"> {{p.nombre}} </a>
+                                  <p> ---> {{p.distrito}} </p>
+                                  <p> ---> {{p.descripcion}} </p>
+                                  <p> ---> {{p.barrio}} </p>
+                                  <p> ---> {{p.calle}}, {{p.numero_via}}</p>
+                                  <p> ---> {{p.codigo_postal}} </p>
+                                  <p> ---> {{p.latitud}}, {{p.longitud}}</p>
+                                  <p> ---> {{p.identificador}} </p>
+                           </div>
+
+                        {% endfor %}
+                    {% endblock %}
+
+
+                    {% if  user.is_authenticated %}
+
+                     {% block comentario %}
+                     	<h1>Comenta</h1>
+
+                     	<form method='post' action=''>{% csrf_token %}
+                         <input name="comentario" value="">
+                         <button type="submit">Envía comentario</button>
+                     	</form>
+
+                      <div>
+                             <h2> {{mensaje}} </h2>
+                      </div>
+
+                     {% endblock %}
+                      {% endif %}
+
+
+                   {% if  user.is_authenticated %}
+
+                    {% block encabezado %}
+                    	<h1>Favorito</h1>
+                    {% endblock %}
+                    {% block contenido %}
+                    	<form method='post' action=''>{% csrf_token %}
+                        <input type="hidden" name="id_parking" value="{{p.identificador}}">
+                        <button type="submit">Añadir a selección</button>
+                    	</form>
+
+                     <div>
+                            <h2> {{mensaje}} </h2>
+                     </div>
+
+                    {% endblock %}
+                  {% endif %}
+
+                      {% block coment %}
+                      {% for c in comentarios %}
+                             <div>
+                                    <p> {{c.comentario}} </p>
+
+                             </div>
+
+                     {% endfor %}
+                     {% endblock %}
+
+
+        </div>
+
+    </body>
+</html>

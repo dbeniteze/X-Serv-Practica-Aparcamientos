@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from .models import Aparcamiento
+from .models import Aparcamiento, Comentario, Info_Usuario
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.contrib.auth import authenticate, login as log_in, logout as log_out
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -22,7 +22,9 @@ def parser(request):
     soup = BeautifulSoup(r, "xml")
 
     atributos = soup.find_all('contenido')   #atributos es el nombre del tag
-
+    lista_etiquetas = ['ID-ENTIDAD', 'NOMBRE', 'DESCRIPCION', 'ACCESIBILIDAD'
+                        'CONTENT-URL', 'NOMBRE-VIA', 'NUM', 'LOCALIDAD',
+                        'PROVINCIA', 'CODIGO-POSTAL']
     for parking in atributos:
 
         parse_id = parking.find('atributo', nombre='ID-ENTIDAD')
@@ -81,10 +83,62 @@ def parser(request):
         nueva_entrada.save()
 
 
+@csrf_exempt
+def pagina_personal(request, usuario):
+
+
+    return HttpResponse(template.render(context, request))
+
+def pagina_usuario(request, nombre_user):
+
+    inf_user = Info_Usuario.objects.filter(usuario=nombre_user)
+
+    template = loader.get_template('pagina_personal.html')
+    context = {
+        'info_usuario': inf_user,
+        'usuario': nombre_user
+        }
+    return HttpResponse(template.render(context, request))
+
+def aparcamientoID(request, ID):
+    if request.method == 'GET':
+        template = loader.get_template('aparcamientoID.html')
+
+        #aparcamientos = Aparcamiento.objects.all()
+        aparcamientos_filtrados = Aparcamiento.objects.filter(identificador=ID)
+
+        comentario_asociado = Comentario.objects.filter(aparcamiento=aparcamientos_filtrados)
+
+        context = {
+            'aparcamientos': aparcamientos_filtrados,
+            'comentarios': comentario_asociado
+            }
+    if request.method == 'POST':
+        template = loader.get_template('aparcamientoID.html')
+        aparcamiento_concreto = Aparcamiento.objects.get(identificador=ID)
+
+        if request.POST.get('comentario'): #se envia un comentario sobre el aparcamiento
+            comentario = request.POST['comentario']
+            Comentario.objects.create(comentario= comentario,
+                                      aparcamiento= aparcamiento_concreto)
+            mensaje= "comentario enviado"
+            context = {
+                'mensaje': mensaje
+                }
+        else: #corresponde a la seleccion de un aparcamiento
+
+            Info_Usuario.objects.create(usuario = request.user.username,
+                                        aparcamiento = aparcamiento_concreto)
+            mensaje= "parking seleccionado"
+            context = {
+                'mensaje': mensaje
+                }
+    return HttpResponse(template.render(context, request))
+
 
 
 @csrf_exempt
-def inicial(request):
+def barra_aparcamientos(request):
 
     if request.method == 'GET':
         template = loader.get_template('base.html')
@@ -107,33 +161,6 @@ def inicial(request):
 
     return HttpResponse(template.render(context, request))
 
-
-
-def login(request):
-    #if not request.user.is_anonymous():
-    #    return HttpResponseRedirect('/privado')
-    template = loader.get_template('login.html')
-    if request.method == 'POST':
-        formulario = AuthenticationForm(request.POST)
-        usuario = request.POST['username']
-        clave = request.POST['password']
-        acceso = authenticate(username=usuario, password=clave)
-        if acceso is not None:
-            log_in(request, acceso)
-            return HttpResponseRedirect('/')
-        else:
-            pass
-            return HttpResponseRedirect('/registro')
-    else:
-        formulario = AuthenticationForm()
-        context = {'formulario': formulario}
-    return HttpResponse(template.render(context, request))
-
-
-
-def logout(request):
-    log_out(request)
-    return HttpResponseRedirect('/')
 
 
 def registro(request):
