@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block side %}
+
+   <div class=class="form-group">
+       <form action="" method="post">
+          <div>
+             <title>{% block caja %}Selecciona un distrito{% endblock caja %}</title>
+               <select name="distrito">
+                 <option value="ARGANZUELA">ARGANZUELA</option>
+                 <option value="CHAMARTIN">CHAMARTIN</option>
+                 <option value="HORTALEZA">HORTALEZA</option>
+                 <option value="PUENTE DE VALLECAS">PUENTE DE VALLECAS</option>
+                 <option value="TETUAN">TETUAN</option>
+                 <option value="VILLAVERDE">VILLAVERDE</option>
+                 <option value="BARAJAS">BARAJAS</option>
+                 <option value="CHAMBERI">CHAMBERI</option>
+                 <option value="LATINA">LATINA</option>
+                 <option value="RETIRO">RETIRO</option>
+                 <option value="USERA">USERA</option>
+                 <option value="CARABANCHEL">CARABANCHEL</option>
+                 <option value="CIUDAD LINEAL">CIUDAD LINEAL</option>
+                 <option value="MONCLOA-ARAVACA">MONCLOA-ARAVACA</option>
+                 <option value="SALAMANCA">SALAMANCA</option>
+                 <option value="VICALVARO">VICALVARO</option>
+                 <option value="CENTRO">CENTRO</option>
+                 <option value="FUENCARRAL-EL PARDO">FUENCARRAL-EL PARDO</option>
+                 <option value="MORATALAZ">MORATALAZ</option>
+                 <option value="SAN BLAS-CANILLEJAS">SAN BLAS-CANILLEJAS</option>
+                 <option value="VILLA DE VALLECAS">VILLA DE VALLECAS</option>
+              </select>
+              </div>
+
+         <div class="button">
+             <button type="submit">Enviar</button>
+         </div>
+      </form>
+</div>
+</div>
+
+{% endblock side %}
+
+{% block maincontent %}
+
+
+              <ul class="list-group">
+              <li class="list-group-item"><h2>Aparcamientos</h2></li>
+               {% for p in aparcamientos %}
+                     <div>
+                        <li class="list-group-item">
+                         <a href="{{p.url}}"> <h4>{{p.nombre}}</h4></a>
+                            <a href="{{p.identificador}}"> Pagina propia </a>
+                        </li>
+                     </div>
+                  {% endfor %}
+
+
+
+ {% endblock maincontent %}

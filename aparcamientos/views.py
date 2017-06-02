@@ -5,8 +5,10 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.contrib.auth import authenticate, login as log_in, logout as log_out
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
+import bs4
 from bs4 import BeautifulSoup, CData
 import urllib.request
+from django.db.models import Count
 from django.template import loader
 
 
@@ -22,35 +24,15 @@ def parser(request):
     soup = BeautifulSoup(r, "xml")
 
     atributos = soup.find_all('contenido')   #atributos es el nombre del tag
-    lista_etiquetas = ['ID-ENTIDAD', 'NOMBRE', 'DESCRIPCION', 'ACCESIBILIDAD'
+    lista_etiquetas = ['ID-ENTIDAD', 'NOMBRE', 'DESCRIPCION', 'ACCESIBILIDAD',
                         'CONTENT-URL', 'NOMBRE-VIA', 'NUM', 'LOCALIDAD',
-                        'PROVINCIA', 'CODIGO-POSTAL']
+                        'PROVINCIA', 'CODIGO-POSTAL', 'BARRIO', 'DISTRITO',
+                        'LATITUD', 'LONGITUD', 'TELEFONO', 'EMAIL']
+    aux_list = []
     for parking in atributos:
-
-        parse_id = parking.find('atributo', nombre='ID-ENTIDAD')
-        parse_nombre = parking.find('atributo', nombre='NOMBRE')
-        parse_descripcion = parking.find('atributo', nombre='DESCRIPCION')
-        parse_access = parking.find('atributo', nombre='ACCESIBILIDAD')
-        parse_url = parking.find('atributo', nombre='CONTENT-URL')
-        parse_calle = parking.find('atributo', nombre='NOMBRE-VIA')
-        parse_num_via = parking.find('atributo', nombre='NUM')
-        parse_localidad = parking.find('atributo', nombre='LOCALIDAD')
-        parse_provincia = parking.find('atributo', nombre='PROVINCIA')
-        parse_codigo_postal = parking.find('atributo', nombre='CODIGO-POSTAL')
-        parse_barrio = parking.find('atributo', nombre='BARRIO')
-        parse_distrito = parking.find('atributo', nombre='DISTRITO')
-        parse_latitud = parking.find('atributo', nombre='LATITUD')
-        parse_longitud = parking.find('atributo', nombre='LONGITUD')
-        parse_tlf = parking.find('atributo', nombre='TELEFONO')
-        parse_mail = parking.find('atributo', nombre='EMAIL')
-
-
-        aux_list = [parse_id, parse_nombre, parse_descripcion, parse_access,
-                        parse_url, parse_calle, parse_num_via, parse_localidad,
-                        parse_provincia, parse_codigo_postal, parse_barrio,
-                        parse_distrito,  parse_latitud, parse_longitud,
-                        parse_tlf, parse_mail,]
-
+        for etiqueta in lista_etiquetas:
+            parse_etiqueta = parking.find('atributo', nombre=etiqueta)
+            aux_list.append(parse_etiqueta)
         #iteramos la lista por su indice para poder cambiarla
         for elemento in range(len(aux_list)):
             if hasattr(aux_list[elemento], 'string'):
@@ -81,13 +63,31 @@ def parser(request):
                                      tlf = aux_list[14],
                                      mail = aux_list[15])
         nueva_entrada.save()
-
+        aux_list = []
 
 @csrf_exempt
-def pagina_personal(request, usuario):
+def inicio(request):
+    comentarios_parking = Aparcamiento.objects.annotate(numero_comentarios = Count('comentario')).order_by('-numero_comentarios').exclude(numero_comentarios = 0)[:5]
 
+    paginas_personales = Info_Usuario.objects.all()
+    lista_usuarios = []
+    lista_info_personal = []
+    for u in paginas_personales:
+        if u.usuario not in lista_usuarios:
+            lista_usuarios.append(u.usuario)
+            lista_info_personal.append([u.usuario, u.pagina_personal])
+
+    template = loader.get_template('inicio.html')
+    context = {
+        'aparcamientos_comentados':comentarios_parking,
+        #'pags_personales':paginas_personales,
+        'lista_usuarios' : lista_info_personal
+        }
 
     return HttpResponse(template.render(context, request))
+
+
+
 
 def pagina_usuario(request, nombre_user):
 
@@ -98,15 +98,14 @@ def pagina_usuario(request, nombre_user):
         'info_usuario': inf_user,
         'usuario': nombre_user
         }
+
     return HttpResponse(template.render(context, request))
 
 def aparcamientoID(request, ID):
     if request.method == 'GET':
         template = loader.get_template('aparcamientoID.html')
 
-        #aparcamientos = Aparcamiento.objects.all()
         aparcamientos_filtrados = Aparcamiento.objects.filter(identificador=ID)
-
         comentario_asociado = Comentario.objects.filter(aparcamiento=aparcamientos_filtrados)
 
         context = {
@@ -129,6 +128,9 @@ def aparcamientoID(request, ID):
 
             Info_Usuario.objects.create(usuario = request.user.username,
                                         aparcamiento = aparcamiento_concreto)
+
+
+
             mensaje= "parking seleccionado"
             context = {
                 'mensaje': mensaje
@@ -141,14 +143,14 @@ def aparcamientoID(request, ID):
 def barra_aparcamientos(request):
 
     if request.method == 'GET':
-        template = loader.get_template('base.html')
+        template = loader.get_template('aparcamientos.html')
 
         aparcamientos = Aparcamiento.objects.all()
         context = {
             'aparcamientos': aparcamientos
             }
     if request.method == 'POST':
-        template = loader.get_template('base.html')
+        template = loader.get_template('aparcamientos.html')
         filtro_distrito = request.POST['distrito']
         try:
             aparcamientos_filtrados = Aparcamiento.objects.filter(distrito=filtro_distrito)

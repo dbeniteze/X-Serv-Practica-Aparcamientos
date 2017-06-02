@@ -1,95 +1,65 @@
-{% load staticfiles %}
-
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>{% block title %}Dominio | Titulo pagina {% endblock %}</title>
-        <meta name="description" content="{% block description %}{% endblock %}"/>
-
-        <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
-        <link href="{% static "bootstrap/css/local.min.css" %}" rel="stylesheet">
+{% extends 'base.html' %}
 
 
-        {% block head %}
-        {% endblock %}
-    </head>
-
-    <body>
+{% block maincontent %}
 
 
-        <div class="container">
+{% for p in aparcamientos %}
 
-            <div class="row">
-                <div class="col-md-8 col-sm-12">
-                    {% block main-content %}
-                     {% for p in aparcamientos %}
-                           <div>
-                               <a href="{{p.url}}"> {{p.nombre}} </a>
-                                  <p> ---> {{p.distrito}} </p>
-                                  <p> ---> {{p.descripcion}} </p>
-                                  <p> ---> {{p.barrio}} </p>
-                                  <p> ---> {{p.calle}}, {{p.numero_via}}</p>
-                                  <p> ---> {{p.codigo_postal}} </p>
-                                  <p> ---> {{p.latitud}}, {{p.longitud}}</p>
-                                  <p> ---> {{p.identificador}} </p>
-                           </div>
+    <a href="{{p.url}}"> <h3>{{p.nombre}}</h3> </a>
+       <p> DESCRIPCIÓN: {{p.descripcion}} </p>
+       <p> BARRIO/DISTRITO: {{p.barrio}}/{{p.distrito}} </p>
+       <p> DIRECCIÓN: CALLE {{p.calle}}, {{p.numero_via}}</p>
+       <p> CP: {{p.codigo_postal}} </p>
+       <p> LAT/LONG: {{p.latitud}}/{{p.longitud}}</p>
+       <p> TLF: {{p.tlf}} </p>
+       <p> EMAIL: {{p.mail}} </p>
 
-                        {% endfor %}
-                    {% endblock %}
+{% endfor %}
 
 
-                    {% if  user.is_authenticated %}
 
-                     {% block comentario %}
-                     	<h1>Comenta</h1>
+  {% if  user.is_authenticated %}
 
-                     	<form method='post' action=''>{% csrf_token %}
-                         <input name="comentario" value="">
-                         <button type="submit">Envía comentario</button>
-                     	</form>
+   {% block comentario %}
+   	<h1>Comenta</h1>
 
-                      <div>
-                             <h2> {{mensaje}} </h2>
-                      </div>
-
-                     {% endblock %}
-                      {% endif %}
+   	<form method='post' action=''>{% csrf_token %}
+       <input name="comentario" value="">
+       <button type="submit">Envía comentario</button>
+   	</form>
 
 
-                   {% if  user.is_authenticated %}
-
-                    {% block encabezado %}
-                    	<h1>Favorito</h1>
-                    {% endblock %}
-                    {% block contenido %}
-                    	<form method='post' action=''>{% csrf_token %}
-                        <input type="hidden" name="id_parking" value="{{p.identificador}}">
-                        <button type="submit">Añadir a selección</button>
-                    	</form>
-
-                     <div>
-                            <h2> {{mensaje}} </h2>
-                     </div>
-
-                    {% endblock %}
-                  {% endif %}
-
-                      {% block coment %}
-                      {% for c in comentarios %}
-                             <div>
-                                    <p> {{c.comentario}} </p>
-
-                             </div>
-
-                     {% endfor %}
-                     {% endblock %}
+   {% endblock %}
+    {% endif %}
 
 
-        </div>
+    {% block coment %}
+  {% for c in comentarios %}
+         <div>
+                 <p> {{c.comentario}} </p>
 
-    </body>
-</html>
+         </div>
+
+  {% endfor %}
+  {% endblock %}
+{% endblock maincontent %}
+
+
+
+
+{% block side %}
+   {% if  user.is_authenticated %}
+    <title> {% block caja %}Selección aparcamiento{% endblock caja %}</title>
+     	<form method='post' action=''>{% csrf_token %}
+         <input type="hidden" name="id_parking" value="{{p.identificador}}">
+         <button type="submit" class="center-block">Añadir a selección</button>
+     	</form>
+
+      <div>
+             <h2> {{mensaje}} </h2>
+      </div>
+{% else %}
+      <h4> Tienes que estar autenticado para esta acción </h4>
+   {% endif %}
+{% endblock side %}

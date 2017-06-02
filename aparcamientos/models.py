@@ -26,7 +26,7 @@ class Info_Usuario(models.Model):
     usuario = models.CharField(max_length=32, blank=True)
     aparcamiento = models.ForeignKey('Aparcamiento')
     hora_seleccion = models.DateTimeField(default=timezone.now)
-    pagina_personal = models.CharField(max_length=100, blank=True, default="Página de usuario") #posibilidad
+    pagina_personal = models.CharField(max_length=200, blank=True, default="PAGINA DE ")
 
 class Comentario(models.Model):
     comentario = models.TextField()

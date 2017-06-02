@@ -1,0 +1,56 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>{% block title %}Dominio | Titulo pagina {% endblock %}</title>
+        <meta name="description" content="{% block description %}{% endblock %}"/>
+
+        <link href="{% static "bootstrap/css/bootstrap.min.css" %}" rel="stylesheet">
+        <link href="{% static "bootstrap/css/local.min.css" %}" rel="stylesheet">
+
+
+        {% block head %}
+        {% endblock %}
+    </head>
+
+    <body>
+
+
+        <div class="container">
+
+            <div class="row">
+                <div class="col-md-8 col-sm-12">
+                    {% block main-content %}
+                     {% for p in aparcamientos_comentados %}
+                           <div>
+                               <a href="{{p.url}}"> {{p.nombre}} </a>
+                                  <p> ---> {{p.barrio}} </p>
+                                  <p> ---> {{p.calle}}, {{p.numero_via}}</p>
+                                  <p> ---> {{p.codigo_postal}} </p>
+                                  <a href="/aparcamientos/{{i.aparcamiento.identificador}}"> Más información </a>
+                           </div>
+
+                        {% endfor %}
+                    {% endblock %}
+
+                    {% block personales %}
+                     {% for u in lista_usuarios %}
+
+                           <div>
+                                 <a href="/{{u.0}}"> {{u.1}} </a>
+
+
+
+                           </div>
+                           {% endfor %}
+                    {% endblock %}
+
+        </div>
+
+    </body>
+</html>
