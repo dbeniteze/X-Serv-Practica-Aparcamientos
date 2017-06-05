@@ -4,6 +4,7 @@
 
 {% block maincontent %}
 
+<h3>{{nombre_pagina}}</h3><br><br>
 
             {% for i in info_usuario %}
                   <ul class="list-group">
@@ -20,20 +21,51 @@
 
 
 
-        {% if  user.is_authenticated %}
+
 {% block side %}
-   <h3> Seleccion aparcamientos de {{usuario}} </h3>
+{% if  user.is_authenticated and request.user.username == usuario %}
 
-            <h1>Cambia nombre página personal</h1>
-
+            <h4>Cambia nombre página personal</h4>
+            <title> {% block caja %}Seleccion aparcamientos de {{usuario}}{% endblock caja %}</title>
             <form method='post' action=''>{% csrf_token %}
              <input name="nombre_pagina" value="">
              <button type="submit">Cambiar</button>
-            </form>
+          </form><br>
 
-          <div>
-                 <h2> {{mensaje}} </h2>
+
+            <div class="dropdown">
+               <form method='post' name='letra'>
+              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Tamaño letra
+              <span class="caret"></span></button>
+              <ul class="dropdown-menu">
+                <li><a value="100">Pequeña</button></li>
+                <li><a value="140">Mediana</button></li>
+                <li><a value="190">Grande</button></li>
+              </ul>
+              </form>
+           </div><br>
+
+           <div class="dropdown">
+             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Color fondo
+             <span class="caret"></span></button>
+             <ul class="dropdown-menu">
+               <li><a href="#">Por defecto</a></li>
+               <li><a href="#">Dark</a></li>
+               <li><a href="#">Blue</a></li>
+             </ul>
           </div>
 
+          <div>
+                 <h3> {{mensaje}} </h3>
+          </div>
+
+{% else %}
+
+         <title> Seleccion aparcamientos de {{usuario}}</title>
+
+{% endif %}
+
+
+
+
 {% endblock side %}
-          {% endif %}

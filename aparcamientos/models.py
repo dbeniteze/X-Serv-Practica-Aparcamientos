@@ -26,8 +26,13 @@ class Info_Usuario(models.Model):
     usuario = models.CharField(max_length=32, blank=True)
     aparcamiento = models.ForeignKey('Aparcamiento')
     hora_seleccion = models.DateTimeField(default=timezone.now)
-    pagina_personal = models.CharField(max_length=200, blank=True, default="PAGINA DE ")
 
 class Comentario(models.Model):
     comentario = models.TextField()
     aparcamiento = models.ForeignKey('Aparcamiento')
+
+class Estilo_Personal(models.Model):
+    usuario = models.CharField(max_length=32, blank=True)
+    nombre_pagina = models.CharField(max_length=200,  blank = True)
+    tamaño_letra = models.IntegerField(default='140')
+    color = models.CharField(max_length=20, default='#FFFFFF')

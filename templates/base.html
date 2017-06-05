@@ -17,6 +17,17 @@
 
     </head>
 
+{% if  user.is_authenticated %}
+    <style>
+      body{
+          /*background-color: {{color}};*/
+          background-color: #FFFFFF;
+          /*font-size: {{size}}%;*/
+          font-size: 140%;
+        }
+   </style>
+{% endif %}
+
     <body>
       <!-- CARGAMOS PLANTILLA navbar.html. -->
 

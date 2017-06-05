@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
-from .models import Aparcamiento, Comentario, Info_Usuario
+from .models import Aparcamiento, Comentario, Info_Usuario, Estilo_Personal
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.contrib.auth import authenticate, login as log_in, logout as log_out
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
@@ -69,19 +69,13 @@ def parser(request):
 def inicio(request):
     comentarios_parking = Aparcamiento.objects.annotate(numero_comentarios = Count('comentario')).order_by('-numero_comentarios').exclude(numero_comentarios = 0)[:5]
 
-    paginas_personales = Info_Usuario.objects.all()
-    lista_usuarios = []
-    lista_info_personal = []
-    for u in paginas_personales:
-        if u.usuario not in lista_usuarios:
-            lista_usuarios.append(u.usuario)
-            lista_info_personal.append([u.usuario, u.pagina_personal])
+
+    paginas_personales = Estilo_Personal.objects.all()
 
     template = loader.get_template('inicio.html')
     context = {
         'aparcamientos_comentados':comentarios_parking,
-        #'pags_personales':paginas_personales,
-        'lista_usuarios' : lista_info_personal
+        'lista_usuarios' : paginas_personales
         }
 
     return HttpResponse(template.render(context, request))
@@ -91,21 +85,35 @@ def inicio(request):
 
 def pagina_usuario(request, nombre_user):
 
-    inf_user = Info_Usuario.objects.filter(usuario=nombre_user)
-
+    inf_user = Info_Usuario.objects.filter(usuario=nombre_user)  #para obtener los aparcamientos del user
+    estilo_user = Estilo_Personal.objects.get(usuario=nombre_user)
     template = loader.get_template('pagina_personal.html')
     context = {
         'info_usuario': inf_user,
-        'usuario': nombre_user
+        'usuario': nombre_user,
+        'nombre_pagina': estilo_user.nombre_pagina
         }
+    if request.POST.get('nombre_pagina'):
+        estilo_user.nombre_pagina = request.POST['nombre_pagina']
+        estilo_user.save(update_fields=['nombre_pagina'])
+        mensaje = 'Nombre de la página actualizado'
+        context = {
+            'info_usuario': inf_user,
+            'mensaje' : mensaje,
+            'usuario': nombre_user,
+            'nombre_pagina': estilo_user.nombre_pagina
+            }
+    if request.POST.get('letra'):
+        print(request.POST['letra'])
 
     return HttpResponse(template.render(context, request))
 
 def aparcamientoID(request, ID):
+    aparcamientos_filtrados = Aparcamiento.objects.filter(identificador=ID)
     if request.method == 'GET':
         template = loader.get_template('aparcamientoID.html')
 
-        aparcamientos_filtrados = Aparcamiento.objects.filter(identificador=ID)
+
         comentario_asociado = Comentario.objects.filter(aparcamiento=aparcamientos_filtrados)
 
         context = {
@@ -120,19 +128,26 @@ def aparcamientoID(request, ID):
             comentario = request.POST['comentario']
             Comentario.objects.create(comentario= comentario,
                                       aparcamiento= aparcamiento_concreto)
-            mensaje= "comentario enviado"
+            comentario_asociado = Comentario.objects.filter(aparcamiento=aparcamientos_filtrados)
+
             context = {
-                'mensaje': mensaje
+                'aparcamientos': aparcamientos_filtrados,
+                'comentarios': comentario_asociado
                 }
         else: #corresponde a la seleccion de un aparcamiento
+            try:
 
-            Info_Usuario.objects.create(usuario = request.user.username,
-                                        aparcamiento = aparcamiento_concreto)
+                aparcamiento_añadido = Info_Usuario.objects.get(aparcamiento__identificador = ID)
+                mensaje = 'El aparcamiento ya fue seleccionado anteriormente'
 
+            except Info_Usuario.DoesNotExist:  #si no existe previamente ese aparcamiento para el usuario
+                pass                           #se crea
+                Info_Usuario.objects.create(usuario = request.user.username,
+                                            aparcamiento = aparcamiento_concreto)
 
-
-            mensaje= "parking seleccionado"
+                mensaje= "parking seleccionado"
             context = {
+                'aparcamientos': aparcamientos_filtrados,
                 'mensaje': mensaje
                 }
     return HttpResponse(template.render(context, request))
@@ -171,6 +186,8 @@ def registro(request):
         formulario = UserCreationForm(request.POST)
         if formulario.is_valid:
             formulario.save()
+            Estilo_Personal.objects.create(usuario = request.POST['username'],
+                                           nombre_pagina = 'Página de ' + request.POST['username'])
             return HttpResponseRedirect('/')
     else:
         formulario = UserCreationForm()
