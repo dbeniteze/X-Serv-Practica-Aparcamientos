@@ -17,13 +17,12 @@
 
     </head>
 
-{% if  user.is_authenticated %}
+{% if  user.is_authenticated %}  <!--and request.user.username == usuario %} -->
     <style>
       body{
-          /*background-color: {{color}};*/
-          background-color: #FFFFFF;
-          /*font-size: {{size}}%;*/
-          font-size: 140%;
+          background-color: {{color}};
+          font-size: {{size}}%;
+
         }
    </style>
 {% endif %}
@@ -43,7 +42,7 @@
            <div class="panel panel-default">
 
             <div class="panel-heading">
-              <h3 class="panel-title">{% block caja %}{% endblock caja %}</h3>
+              <h3 class="panel-title text-center">{% block caja %}{% endblock caja %}</h3>
                   <div class="panel-body">
                      {% block side %}
                      {% endblock side %}

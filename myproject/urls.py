@@ -10,7 +10,7 @@ urlpatterns = [
     url(r'^parser/', 'aparcamientos.views.parser'),  #para poder utilizar la base
     url(r'^([a-zA-Z]+[0-9]*)$', "aparcamientos.views.pagina_usuario"),
     url(r'^registro/$','aparcamientos.views.registro'),
-    url(r'^login/',login),
-    url(r'^logout/', logout),
+    url(r'^login/', login),
+    url(r'^logout/', logout, {'next_page': '/'}),
     url(r'^aparcamientos/([0-9]+)$', "aparcamientos.views.aparcamientoID")
 ]

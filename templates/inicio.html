@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
-
-
+{% load static %}
 {% block maincontent %}
-<h2>Aparcamientos más comentados</h2>
+
+{% block title %}Inicio {% endblock %}
+
+<h2>Aparcamientos más comentados</h2><br>
    {% for p in aparcamientos_comentados %}
    <ul class="list-group">
       <li class="list-group-item">
@@ -11,7 +13,7 @@
           <p> ---> {{p.calle}}, {{p.numero_via}}</p>
           <p> ---> {{p.codigo_postal}} </p>
           <a href="/aparcamientos/{{p.identificador}}"> Más información </a>
-   </li>
+   </li><br>
 
       {% endfor %}
 {% endblock maincontent %}
@@ -20,10 +22,13 @@
 
 {% block side %}
 
+<title> {% block caja %}Selección aparcamiento{% endblock caja %}</title>
+
    {% for u in lista_usuarios %}
 
-   <title> {% block caja %}Páginas personales{% endblock caja %}</title>
-      <p><a href="/{{u.usuario}}"> {{u.nombre_pagina}} </a></p>
+   <p class="text-center"><a href="/{{u.usuario}}"> <strong>{{u.nombre_pagina}}</strong> </a></p>
+
 
    {% endfor %}
+
 {% endblock side %}

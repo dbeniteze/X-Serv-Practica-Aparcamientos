@@ -14,7 +14,7 @@
                         <p> {{i.aparcamiento.codigo_postal}} </p>
                         <a href="/aparcamientos/{{i.aparcamiento.identificador}}"> Más información </a>
                          <p> Seleccionado en {{i.hora_seleccion}} </p>
-                  </li>
+                  </li><br>
                {% endfor %}
 
 {% endblock maincontent %}
@@ -25,35 +25,33 @@
 {% block side %}
 {% if  user.is_authenticated and request.user.username == usuario %}
 
-            <h4>Cambia nombre página personal</h4>
+            <label>Cambia nombre página personal:</label>
             <title> {% block caja %}Seleccion aparcamientos de {{usuario}}{% endblock caja %}</title>
             <form method='post' action=''>{% csrf_token %}
              <input name="nombre_pagina" value="">
-             <button type="submit">Cambiar</button>
+             <button type="submit" class="btn btn-primary btn-sm">Cambiar</button>
           </form><br>
 
 
-            <div class="dropdown">
-               <form method='post' name='letra'>
-              <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Tamaño letra
-              <span class="caret"></span></button>
-              <ul class="dropdown-menu">
-                <li><a value="100">Pequeña</button></li>
-                <li><a value="140">Mediana</button></li>
-                <li><a value="190">Grande</button></li>
-              </ul>
-              </form>
-           </div><br>
+          <div class="form-group">
+             <form action="" method="post">{% csrf_token %}
+               <label>Tamaño de letra:</label><br>
+               <label class="radio-inline"><input type="radio" name="letra" value="100">Small</label>
+               <label class="radio-inline"><input type="radio" name="letra" value="140">Medium</label>
+               <label class="radio-inline"><input type="radio" name="letra" value="190">Big</label>
+              <br><button type="submit" class="btn btn-primary btn-xs">Enviar</button>
+             </form>
+           <br>
 
-           <div class="dropdown">
-             <button class="btn btn-primary dropdown-toggle" type="button" data-toggle="dropdown">Color fondo
-             <span class="caret"></span></button>
-             <ul class="dropdown-menu">
-               <li><a href="#">Por defecto</a></li>
-               <li><a href="#">Dark</a></li>
-               <li><a href="#">Blue</a></li>
-             </ul>
-          </div>
+           <div class="form-group">
+             <form action="" method="post">{% csrf_token %}
+               <label>Color de fondo:</label><br>
+               <label class="radio-inline"><input type="radio" name="fondo" value="#FFFFFF">Default</label>
+               <label class="radio-inline"><input type="radio" name="fondo" value="#5C5858">Dark</label>
+               <label class="radio-inline"><input type="radio" name="fondo" value="#7fb3d5">Blue</label>
+              <br><button type="submit" class="btn btn-primary btn-xs">Enviar</button>
+             </form>
+           <br>
 
           <div>
                  <h3> {{mensaje}} </h3>

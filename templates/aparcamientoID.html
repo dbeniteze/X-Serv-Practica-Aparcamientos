@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
 
+{% load static %}
 
 {% block maincontent %}
 
+{% block title %}Página aparcamiento {% endblock %}
 
 {% for p in aparcamientos %}
-
+<div class="panel panel-info">
+   <div class="panel-body">
     <a href="{{p.url}}"> <h3>{{p.nombre}}</h3> </a>
        <p> DESCRIPCIÓN: {{p.descripcion}} </p>
        <p> BARRIO/DISTRITO: {{p.barrio}}/{{p.distrito}} </p>
@@ -14,7 +17,8 @@
        <p> LAT/LONG: {{p.latitud}}/{{p.longitud}}</p>
        <p> TLF: {{p.tlf}} </p>
        <p> EMAIL: {{p.mail}} </p>
-
+      </div>
+      </div>
 {% endfor %}
 
 
@@ -25,8 +29,8 @@
    	<h1>Comenta</h1>
 
    	<form method='post' action=''>{% csrf_token %}
-       <input name="comentario" value="">
-       <button type="submit">Envía comentario</button>
+      <textarea class="form-control" rows="4" name="comentario"></textarea>
+       <button type="submit" class="btn btn-primary btn-sm">Envía comentario</button>
    	</form>
 
 
@@ -59,13 +63,13 @@
     <title> {% block caja %}Selección aparcamiento{% endblock caja %}</title>
      	<form method='post' action=''>{% csrf_token %}
          <input type="hidden" name="id_parking" value="{{p.identificador}}">
-         <button type="submit" class="center-block">Añadir a selección</button>
+         <button type="submit" class="btn btn-primary btn-sm center-block">Añadir a selección</button>
      	</form>
 
       <div>
-             <h2> {{mensaje}} </h2>
+             <h4 class="text-center"> {{mensaje}} </h4>
       </div>
 {% else %}
-      <h4> Tienes que estar autenticado para esta acción </h4>
+      <h5 class="text-center"> Tienes que estar autenticado para esta acción </h5>
    {% endif %}
 {% endblock side %}
