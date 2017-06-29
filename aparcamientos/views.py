@@ -5,6 +5,7 @@ from django.http import HttpResponse, HttpResponseRedirect, HttpResponseNotFound
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import bs4
 from bs4 import BeautifulSoup, CData
 import urllib.request
@@ -72,11 +73,28 @@ def estilo_personal(user):
     estilo_definido = Estilo_Personal.objects.get(usuario=user)
     return estilo_definido
 
-#def about(request):
-#     template = loader.get_template('about.html')
+def version_xml(request, usuario):
+    template = loader.get_template("version_xml.html")
+    aparcamientos = Info_Usuario.objects.filter(usuario=usuario)
+    context = {
+        'aparcamientos': aparcamientos
+    }
+    return(HttpResponse(template.render(context, request), content_type="text/xml"))
 
+def about(request):
+     template = loader.get_template('about.html')
+     if request.user.is_authenticated():
+         estilo_visitante = estilo_personal(request.user.username) #informacion del visitante
 
+         context = {
 
+                 'color': estilo_visitante.color,
+                 'size': estilo_visitante.tamaño_letra
+                 }
+
+     else:
+        context = {}
+     return HttpResponse(template.render(context, request))
 
 @csrf_exempt
 def inicio(request):
@@ -94,14 +112,11 @@ def inicio(request):
                 'size': estilo_visitante.tamaño_letra
                 }
 
-
     else:
         context = {
                 'aparcamientos_comentados':comentarios_parking,
                 'lista_usuarios' : paginas_personales
                 }
-
-
 
     return HttpResponse(template.render(context, request))
 
@@ -113,6 +128,19 @@ def pagina_usuario(request, nombre_user):
     inf_user = Info_Usuario.objects.filter(usuario=nombre_user)  #para obtener los aparcamientos del user
     estilo_user = estilo_personal(nombre_user) #informacion del usuario de la pagina
     template = loader.get_template('pagina_personal.html')
+
+    paginator = Paginator(inf_user, 5)     #uso de la paginacion para mostras de 5 en 5 los aparcamientos
+
+    page = request.GET.get('page')
+    try:
+        inf_user = paginator.page(page)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        inf_user = paginator.page(1)
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        inf_user = paginator.page(paginator.num_pages)
+
 
     if request.user.is_authenticated():
         estilo_visitante = estilo_personal(request.user.username) #informacion del visitante
@@ -179,6 +207,7 @@ def pagina_usuario(request, nombre_user):
 def aparcamientoID(request, ID):
     aparcamientos_filtrados = Aparcamiento.objects.filter(identificador=ID)
     comentario_asociado = Comentario.objects.filter(aparcamiento=aparcamientos_filtrados)
+
     if request.method == 'GET':
         template = loader.get_template('aparcamientoID.html')
 
@@ -292,7 +321,7 @@ def barra_aparcamientos(request):
                     }
             else:
                 context = {
-                    'aparcamientos': aparcamientos_filtrados
+                    'aparcamientos': aparcamientos_accesibles
                     }
 
         else:

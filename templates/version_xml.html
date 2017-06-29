@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Contenidos>
+
+ {% for i in aparcamientos %}
+<contenido>
+    <tipo>EntidadesYOrganismos</tipo>
+    <atributos idioma="es">
+        <atributo nombre="ID-ENTIDAD">{{i.aparcamiento.identificador}}</atributo>
+        <atributo nombre="NOMBRE">{{i.aparcamiento.nombre}}</atributo>
+        <atributo nombre="DESCRIPCION">{{i.aparcamiento.descripcion}}</atributo>
+        <atributo nombre="ACCESIBILIDAD">{{i.aparcamiento.accesibilidad}}</atributo>
+        <atributo nombre="CONTENT-URL">{{i.aparcamiento.url}}</atributo>
+        <atributo nombre="LOCALIZACION">
+            <atributo nombre="NOMBRE-VIA">{{i.aparcamiento.via}}</atributo>
+            <atributo nombre="LOCALIDAD">{{i.aparcamiento.localidad}}</atributo>
+            <atributo nombre="PROVINCIA">{{i.aparcamiento.provincia}}</atributo>
+            <atributo nombre="CODIGO-POSTAL">{{i.aparcamiento.codigo_postal}}</atributo>
+            <atributo nombre="BARRIO">{{i.aparcamiento.barrio}}</atributo>
+            <atributo nombre="DISTRITO">{{i.aparcamiento.distrito}}</atributo>
+            <atributo nombre="LATITUD">{{i.aparcamiento.latitud}}</atributo>
+            <atributo nombre="LONGITUD">{{i.aparcamiento.longitud}}</atributo>
+            <atributo nombre="PUNTUACION">{{i.aparcamiento.puntuacion}}</atributo>
+        </atributo>
+        <atributo nombre="DATOSCONTACTOS">
+            <atributo nombre="TELEFONO">{{i.aparcamiento.tlf}}</atributo>
+            <atributo nombre="EMAIL">{{i.aparcamiento.mail}}</atributo>
+        </atributo>
+    </atributos>
+</contenido>
+{% endfor %}
+</Contenidos>

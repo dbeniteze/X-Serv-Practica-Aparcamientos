@@ -1,10 +1,23 @@
 {% extends 'base.html' %}
 
 {% load static %}
+{% block title %} Página personal {% endblock %}
 
 {% block maincontent %}
+<h2>{{nombre_pagina}}</h2>
 
-<h3>{{nombre_pagina}}</h3><br><br>
+<ul class="pager">
+    <span class="step-links">
+      <li class="text-info"> Página {{ info_usuario.number }} de {{ info_usuario.paginator.num_pages }} </li>
+        {% if info_usuario.has_previous %}
+            <li><a href="?page={{ info_usuario.previous_page_number }}">Previous</a></li>
+        {% endif %}
+
+        {% if info_usuario.has_next %}
+            <li><a href="?page={{ info_usuario.next_page_number }}">Next</a></li>
+        {% endif %}
+    </span>
+</ul>
 
             {% for i in info_usuario %}
                   <ul class="list-group">
@@ -17,7 +30,10 @@
                   </li><br>
                {% endfor %}
 
+
+
 {% endblock maincontent %}
+
 
 
 

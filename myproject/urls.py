@@ -13,5 +13,6 @@ urlpatterns = [
     url(r'^login/', login),
     url(r'^logout/', logout, {'next_page': '/'}),
     url(r'^aparcamientos/([0-9]+)$', "aparcamientos.views.aparcamientoID"),
-    url(r'^about/', "aparcamientos.views.about")
+    url(r'^about/', "aparcamientos.views.about"),
+    url(r'^([a-zA-Z]+[0-9]*)/xml$', "aparcamientos.views.version_xml"),
 ]

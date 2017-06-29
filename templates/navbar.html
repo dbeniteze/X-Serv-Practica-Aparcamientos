@@ -10,13 +10,13 @@
       <ul class="nav navbar-nav">
          <li class="active"><a href="/">Inicio</a></li>
          <li><a href="/aparcamientos/">Todos</a></li>
-         <li><a href="/about">About</a></li>
+         <li><a href="/about/">About</a></li>
       </ul>
       {% if user.is_authenticated %}
       <div class="navbar-form navbar-right">
        <div class="btn-group">
            <a class="btn btn-default">{{ user.username }} </a>
-           <a class="btn btn-default" href="/logout/">Logout</a> 
+           <a class="btn btn-default" href="/logout/">Logout</a>
       </div>
 
       {% else %}

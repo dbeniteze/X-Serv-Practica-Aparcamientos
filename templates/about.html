@@ -1,24 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+{% extends 'base.html' %}
+{% load static %}
 
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css">
-     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap-theme.min.css">
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+{% block title %} About {% endblock %}
 
-        <title>{% block title %}Dominio | Titulo pagina {% endblock %}</title>
-        <meta name="description" content="{% block description %}{% endblock %}"/>
-
+{% block maincontent %}
+<br><br><br><br><br>
+<p class="text-muted text-left"> <strong>La práctica final de la asignatura consiste en la creación de una aplicación
+web que aglutine información sobre aparcamientos en la ciudad de Madrid.
+La aplicación se encarga de descargar información sobre los mencionados
+aparcamientos, disponibles públicamente en formato XML en el portal de datos
+abiertos de Madrid, y de ofrecerlos a los usuarios para que puedan seleccionar
+los que les parezca más interesantes, y comentar sobre ellos. </strong></p>
 
 
-    </head>
-
-    <body>
 
 
-    </body>
-</html>
+{% endblock maincontent %}
+
+
+
+{% block side %}
+<title> {% block caja %}<h3 class="text-center">Autor</h3>{% endblock caja %}</title>
+<p class="text-center"><a href="https://github.com/dbeniteze"> <strong>Diego Benítez Elías</strong> </a></p>
+{% endblock side %}
