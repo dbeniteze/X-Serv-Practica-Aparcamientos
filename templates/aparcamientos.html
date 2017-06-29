@@ -42,6 +42,20 @@
 </div>
 </div>
 
+
+
+<br>
+   <div>
+<label>Ver aparcamientos accesibles:</label>
+  <form method='post' action=''>{% csrf_token %}
+     <input type="hidden" name="accessibilidad" value="fgfdgdf">
+     <button type="submit" class="btn btn-primary btn-sm center-block">Ver accesibles</button>
+  </form>
+<div>
+   <br>
+  <a class="btn btn-primary btn-sm center-block" href="/aparcamientos/">Ver Todos<a>
+  </div>
+</div>
 {% endblock side %}
 
 {% block maincontent %}
@@ -53,7 +67,7 @@
                      <div>
                         <li class="list-group-item">
                          <a href="{{p.url}}"> <h4>{{p.nombre}}</h4></a>
-                            <a href="{{p.identificador}}"> Pagina propia </a>
+                            <a href="{{p.identificador}}">Más información </a>
                         </li>
                      </div><br>
                   {% endfor %}

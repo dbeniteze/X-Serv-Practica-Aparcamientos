@@ -12,5 +12,6 @@ urlpatterns = [
     url(r'^registro/$','aparcamientos.views.registro'),
     url(r'^login/', login),
     url(r'^logout/', logout, {'next_page': '/'}),
-    url(r'^aparcamientos/([0-9]+)$', "aparcamientos.views.aparcamientoID")
+    url(r'^aparcamientos/([0-9]+)$', "aparcamientos.views.aparcamientoID"),
+    url(r'^about/', "aparcamientos.views.about")
 ]

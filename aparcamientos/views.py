@@ -20,6 +20,8 @@ xml_link = str('http://datos.munimadrid.es/portal/site/egob/menuitem.' +
             'nVCM2000000c205a0aRCRD&preview=full')
 
 def parser(request):
+    entrada_accesibilidad = Boton_Accesibilidad(flag=False)
+    entrada_accesibilidad.save()
     r = urllib.request.urlopen(xml_link).read()
     soup = BeautifulSoup(r, "xml")
 
@@ -38,9 +40,9 @@ def parser(request):
             if hasattr(aux_list[elemento], 'string'):
                 aux_list[elemento] = aux_list[elemento].string
 
-                if aux_list[elemento] == 1:
+                if aux_list[elemento] == "1":
                     aux_list[elemento] = True
-                if aux_list[elemento] == 0:
+                if aux_list[elemento] == "0":
                     aux_list[elemento] = False
 
             else:
@@ -70,26 +72,35 @@ def estilo_personal(user):
     estilo_definido = Estilo_Personal.objects.get(usuario=user)
     return estilo_definido
 
+#def about(request):
+#     template = loader.get_template('about.html')
+
+
+
+
 @csrf_exempt
 def inicio(request):
     comentarios_parking = Aparcamiento.objects.annotate(numero_comentarios = Count('comentario')).order_by('-numero_comentarios').exclude(numero_comentarios = 0)[:5]
     paginas_personales = Estilo_Personal.objects.all()
+    template = loader.get_template('inicio.html')
 
     if request.user.is_authenticated():
         estilo_visitante = estilo_personal(request.user.username) #informacion del visitante
-        template = loader.get_template('inicio.html')
+
         context = {
-            'aparcamientos_comentados':comentarios_parking,
-            'lista_usuarios' : paginas_personales,
-            'color': estilo_visitante.color,
-            'size': estilo_visitante.tamaño_letra
-            }
+                'aparcamientos_comentados':comentarios_parking,
+                'lista_usuarios' : paginas_personales,
+                'color': estilo_visitante.color,
+                'size': estilo_visitante.tamaño_letra
+                }
+
+
     else:
-        template = loader.get_template('inicio.html')
         context = {
-            'aparcamientos_comentados':comentarios_parking,
-            'lista_usuarios' : paginas_personales
-            }
+                'aparcamientos_comentados':comentarios_parking,
+                'lista_usuarios' : paginas_personales
+                }
+
 
 
     return HttpResponse(template.render(context, request))
@@ -100,8 +111,6 @@ def inicio(request):
 def pagina_usuario(request, nombre_user):
 
     inf_user = Info_Usuario.objects.filter(usuario=nombre_user)  #para obtener los aparcamientos del user
-    #estilo_user = Estilo_Personal.objects.get(usuario=nombre_user) #estilo de la pagina personal
-
     estilo_user = estilo_personal(nombre_user) #informacion del usuario de la pagina
     template = loader.get_template('pagina_personal.html')
 
@@ -211,6 +220,14 @@ def aparcamientoID(request, ID):
                     'aparcamientos': aparcamientos_filtrados,
                     'comentarios': comentario_asociado
                     }
+        if request.POST.get('puntuacion'):
+            aparcamiento_concreto.puntuacion += 1
+            aparcamiento_concreto.save(update_fields=['puntuacion'])
+
+            context = {
+                'aparcamientos': aparcamientos_filtrados,
+                'comentarios': comentario_asociado
+                }
         else: #corresponde a la seleccion de un aparcamiento
             park_user = Info_Usuario.objects.filter(usuario=request.user.username) #buscamos los parkings del usuario
             try:
@@ -247,6 +264,7 @@ def aparcamientoID(request, ID):
 
 @csrf_exempt
 def barra_aparcamientos(request):
+
     template = loader.get_template('aparcamientos.html')
     if request.method == 'GET':
         aparcamientos = Aparcamiento.objects.all()
@@ -262,23 +280,42 @@ def barra_aparcamientos(request):
                 'aparcamientos': aparcamientos
                 }
     if request.method == 'POST':
-        filtro_distrito = request.POST['distrito']
-        try:
-            aparcamientos_filtrados = Aparcamiento.objects.filter(distrito=filtro_distrito)
-        except Exception as e:
-            raise "NO ENCUENTRA DISTRITO"
+        if request.POST.get('accessibilidad'):
+            aparcamientos_accesibles = Aparcamiento.objects.filter(access=True)
 
-        if request.user.is_authenticated():
-            estilo_visitante = estilo_personal(request.user.username) #informacion del visitante
-            context = {
-                'aparcamientos': aparcamientos_filtrados,
-                'color': estilo_visitante.color,
-                'size': estilo_visitante.tamaño_letra
-                }
+            if request.user.is_authenticated():
+                estilo_visitante = estilo_personal(request.user.username) #informacion del visitante
+                context = {
+                    'aparcamientos': aparcamientos_accesibles,
+                    'color': estilo_visitante.color,
+                    'size': estilo_visitante.tamaño_letra
+                    }
+            else:
+                context = {
+                    'aparcamientos': aparcamientos_filtrados
+                    }
+
         else:
-            context = {
-                'aparcamientos': aparcamientos_filtrados
-                }
+            filtro_distrito = request.POST['distrito']
+            try:
+                aparcamientos_filtrados = Aparcamiento.objects.filter(distrito=filtro_distrito)
+            except Exception as e:
+                raise "EXCEPCION"#aparcamientos_filtrados = aparcamientos
+
+
+            if request.user.is_authenticated():
+                estilo_visitante = estilo_personal(request.user.username) #informacion del visitante
+                context = {
+                    'aparcamientos': aparcamientos_filtrados,
+                    'color': estilo_visitante.color,
+                    'size': estilo_visitante.tamaño_letra
+                    }
+            else:
+                context = {
+                    'aparcamientos': aparcamientos_filtrados
+                    }
+
+
 
     return HttpResponse(template.render(context, request))
 

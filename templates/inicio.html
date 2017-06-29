@@ -1,17 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
-{% block maincontent %}
 
 {% block title %}Inicio {% endblock %}
+
+{% block maincontent %}
+
+
 
 <h2>Aparcamientos más comentados</h2><br>
    {% for p in aparcamientos_comentados %}
    <ul class="list-group">
       <li class="list-group-item">
-       <a href="{{p.url}}"> {{p.nombre}} </a>
-          <p> ---> {{p.barrio}} </p>
-          <p> ---> {{p.calle}}, {{p.numero_via}}</p>
-          <p> ---> {{p.codigo_postal}} </p>
+      <h4> <a href="{{p.url}}"> {{p.nombre}} <span class="badge btn-primary"> {{p.puntuacion}} </span></a></h4>
+          <p class= "text-muted"> {{p.barrio}} </p>
+          <p class= "text-muted"> {{p.calle}}, {{p.numero_via}}</p>
+          <p class= "text-muted"> {{p.codigo_postal}} </p>
           <a href="/aparcamientos/{{p.identificador}}"> Más información </a>
    </li><br>
 

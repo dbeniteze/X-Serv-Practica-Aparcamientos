@@ -21,6 +21,7 @@ class Aparcamiento(models.Model):
     longitud = models.CharField(max_length=200, blank = True)
     tlf = models.CharField(max_length=200, blank = True)
     mail = models.CharField(max_length = 200, blank = True)
+    puntuacion = models.IntegerField(default=0)
 
 class Info_Usuario(models.Model):
     usuario = models.CharField(max_length=32, blank=True)
