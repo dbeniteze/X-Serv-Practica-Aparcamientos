@@ -14,9 +14,16 @@
        <p class= "text-muted"> <kbd>Barrio/Distrito</kbd> {{p.barrio}}/{{p.distrito}} </p>
        <p class= "text-muted"> <kbd>Dirección</kbd> CALLE {{p.calle}}, {{p.numero_via}}</p>
        <p class= "text-muted"> <kbd>CP</kbd> {{p.codigo_postal}} </p>
-       <p class= "text-muted"> <kbd>LAT/LONG</kbd> {{p.latitud}}/{{p.longitud}}</p>
        <p class= "text-muted"> <kbd>Teléfono</kbd> {{p.tlf}} </p>
        <p class= "text-muted"> <kbd>Email</kbd> {{p.mail}} </p>
+       <p class= "text-muted"> <kbd>Accesibilidad</kbd> {% if p.access %} Sí {% else %} No {% endif %}</p>
+
+       <iframe
+        width="450"
+        height="250"
+        frameborder="0" style="border:0"
+        src="https://www.google.com/maps/embed/v1/view?key=AIzaSyCyfAHq9LSZ4Uoa7qHcVKub9bBWcjFrmWc&center={{p.latitud}},{{p.longitud}}&zoom=18&maptype=roadmap" allowfullscreen>
+      </iframe>
       </div>
       <button type="button" class="btn">Puntuación <span class="badge">{{p.puntuacion}}</span></button>
       </div>

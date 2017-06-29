@@ -121,8 +121,6 @@ def inicio(request):
     return HttpResponse(template.render(context, request))
 
 
-
-
 def pagina_usuario(request, nombre_user):
 
     inf_user = Info_Usuario.objects.filter(usuario=nombre_user)  #para obtener los aparcamientos del user
@@ -253,10 +251,19 @@ def aparcamientoID(request, ID):
             aparcamiento_concreto.puntuacion += 1
             aparcamiento_concreto.save(update_fields=['puntuacion'])
 
-            context = {
-                'aparcamientos': aparcamientos_filtrados,
-                'comentarios': comentario_asociado
-                }
+            if request.user.is_authenticated():
+                estilo_visitante = estilo_personal(request.user.username) #informacion del visitante
+                context = {
+                    'aparcamientos': aparcamientos_filtrados,
+                    'comentarios': comentario_asociado,
+                    'color': estilo_visitante.color,
+                    'size': estilo_visitante.tamaño_letra
+                    }
+            else:
+                context = {
+                    'aparcamientos': aparcamientos_filtrados,
+                    'comentarios': comentario_asociado
+                    }
         else: #corresponde a la seleccion de un aparcamiento
             park_user = Info_Usuario.objects.filter(usuario=request.user.username) #buscamos los parkings del usuario
             try:
@@ -343,8 +350,6 @@ def barra_aparcamientos(request):
                 context = {
                     'aparcamientos': aparcamientos_filtrados
                     }
-
-
 
     return HttpResponse(template.render(context, request))
 
