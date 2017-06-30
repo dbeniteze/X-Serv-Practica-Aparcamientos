@@ -11,6 +11,7 @@ Repositorio de inicio de la práctica final - Curso 2016/2017
 <li>Mapa de google embebido a partir de la API de google</li>
 <li>Comentarios anónimos</li>
 <li>Registro de usuarios</li>
+<li>Uso de Beautyfulsoup para parsear</li>
 </ul>
 <p><a href="https://youtu.be/iRhlkRMIajE" title="Obligatoria">URL parte obligatoria</a>
 <a href="https://youtu.be/BlaNNlQfqoI" title="opcional">URL parte opcional</a></p>
