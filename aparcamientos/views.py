@@ -21,8 +21,7 @@ xml_link = str('http://datos.munimadrid.es/portal/site/egob/menuitem.' +
             'nVCM2000000c205a0aRCRD&preview=full')
 
 def parser(request):
-    entrada_accesibilidad = Boton_Accesibilidad(flag=False)
-    entrada_accesibilidad.save()
+
     r = urllib.request.urlopen(xml_link).read()
     soup = BeautifulSoup(r, "xml")
 

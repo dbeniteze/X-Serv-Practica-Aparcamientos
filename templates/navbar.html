@@ -1,12 +1,18 @@
 <!-- Static navbar -->
-
+{% load static %}
 <nav class="navbar navbar-default navbar-static-top">
   <div class="container">
-    <div class="navbar-header">
 
-      <a class="navbar-brand" href="#">AppArca</a>
+    <div class="navbar-header">
+      <div class="media-left">
+      <img class="img-responsive" src="{% static 'park.png' %}" width="50" height="0">
+      </div>
+
+
+
     </div>
     <div id="navbar" class="navbar-collapse collapse">
+      <a class="navbar-brand" href="#">AppArca</a>
       <ul class="nav navbar-nav">
          <li class="active"><a href="/">Inicio</a></li>
          <li><a href="/aparcamientos/">Todos</a></li>
